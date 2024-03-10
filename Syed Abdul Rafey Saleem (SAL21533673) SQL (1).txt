@@ -1,0 +1,202 @@
+CREATE DATABASE RYAS_Corporate;
+
+USE RYAS_Corporate;
+
+
+CREATE TABLE Location (
+    Location_ID int primary key,
+    Capacity int,
+    Address varchar(30),
+    Availabilities Date
+);
+
+INSERT INTO Location (Location_ID, Capacity, Address, Availabilities)
+VALUES (100, 300, '44 High Rd, Fulham, London', '2023-06-01'), 
+       (110, 450, 'Battersea Park, London', '2023-05-30'),
+       (120, 400, '32 High Street, Victoria, London', '2023-05-25'),
+       (130, 700, '51 Lincoln Rd, North Finchley, London', '2023-06-04'),
+       (140, 1200, '72 Swan Rd, Leyton, London', '2023-06-02');
+
+
+CREATE TABLE Artists (
+    Artist_No int primary key,
+    Artist_Name varchar(30),
+    Rating double(1,1),
+    Contact_No varchar(13),
+    Availabilities Date
+);
+
+INSERT INTO Artists (Artist_No, Artist_Name, Rating, Contact_No, Availabilities)
+VALUES (111, 'Radiohead', 4.5, '+446754839351', '2023-06-01'), 
+       (222, 'The Beatles', 4.9, '+446754839321', '2023-05-30'),
+       (333, 'Cold Play', 4.4, '+446754439301', '2023-05-25'),
+       (444, 'Pearl Jam', 4.8, '+446754899301', '2023-06-04'),
+       (555, 'Aerosmith', 4.9, '+446754839303', '2023-06-02');
+
+
+CREATE TABLE Event_Table (
+    Event_No int primary key,
+    Event_Date date,
+    Menu_Type varchar(40),
+    Guest_Count int,
+    Event_Type varchar(20),
+    Artist_No int,
+    Location_ID int,
+    FOREIGN KEY (Artist_No) REFERENCES Artists(Artist_No),
+    FOREIGN KEY (Location_ID) REFERENCES Location(Location_ID)
+);
+
+INSERT INTO Event_Table (Event_No, Event_Date, Menu_Type, Guest_Count, Event_Type, Artist_No, Location_ID)
+VALUES (101, '2023-05-01', 'Indian/ Vegetarian', 120, 'Wedding', 111, 100), 
+       (102, '2023-05-03', 'Chinese', 140, 'Company Event', 222, 110),
+       (103, '2023-05-05', 'Arabian/ Halal', 210, 'Wedding', 333, 120),
+       (104, '2023-05-09', 'British', 170, 'Party', 444, 130),
+       (105, '2023-05-10', 'Thai/ Vegan', 64, 'Birthday', 555, 120);
+
+
+
+CREATE TABLE Dietary_Requirements (
+    Dietary_No int primary key,
+    Dietaries varchar(50)
+);
+
+INSERT INTO Dietary_Requirements (Dietary_No, Dietaries)
+VALUES (1201, 'Vegetarian'), 
+       (1202, 'Pascatarian'),
+       (1203, 'No coriander'), 
+       (1204, 'Vegan'),
+       (1205, 'Gluten free');
+
+
+
+CREATE TABLE Payment (
+    Payment_ID int primary key,
+    Transactions_Date date,
+    Amount double(7,2),
+    Card_No int,
+    Card_Expiry VARCHAR(5),
+    CVN int
+);
+
+INSERT INTO Payment (Payment_ID, Transactions_Date, Amount, Card_No, Card_Expiry, CVN)
+VALUES (301, '20230512', 13001.34, 400444440404, '09/25', 123), 
+       (302, '20230521', 12300.00, 123456789023, '05/25', 213),
+       (303, '20230523', 12789.90, 543216789067, '01/26', 543),
+       (304, '20230523', 23389.80, 345678901276, '09/27', 456),
+       (305, '20230525', 11058.40, 876543219076, '12/24', 765);
+
+
+
+
+CREATE TABLE Hospitality_Company (
+    Host_Company VARCHAR(50) primary key,
+    Payment_ID int,
+    Email_Address varchar(30),
+    Phone_Number varchar(13),
+    Availabilities Date,
+    FOREIGN KEY Hospitality_Company(Payment_ID) REFERENCES Payment(Payment_ID)
+);
+
+INSERT INTO Hospitality_Company (Host_Company, Payment_ID, Email_Address, Phone_Number, Availabilities)
+VALUES ('Summerly', 301, 'summerly@abc.com', '+446754769351', '2023-06-01'), 
+       ('Bright Sparks', 302, 'bright@abc.com', '+446754329351', '2023-06-01'),
+       ('Host', 304, 'host@abc.com', '+446754123351', '2023-06-01'),
+       ('Acorn', 303, 'acorn@abc.com', '+446756639351', '2023-06-01'),
+       ('Eventbrite', 305, 'event@abc.com', '+446722239351', '2023-06-01');
+
+
+
+CREATE TABLE Catering_Company (
+    Cater_Company VARCHAR(50) primary key,
+    Payment_ID int,
+    Email_Address varchar(30),
+    Phone_Number varchar(13),
+    Availabilities Date, 
+    FOREIGN KEY Catering_Company(Payment_ID) REFERENCES Payment(Payment_ID)
+);
+
+INSERT INTO Catering_Company (Cater_Company, Payment_ID, Email_Address, Phone_Number, Availabilities)
+VALUES ('Premier Catering', 305, 'pc@abc.com', '+446765769351', '2023-06-01'), 
+       ('Well catered', 302, 'well@abc.com', '+446754099351', '2023-06-01'),
+       ('Kings Korner catering', 303, 'king@abc.com', '+446754100351', '2023-06-01'),
+       ('Catering Connection', 304, 'connection@abc.com', '+446756611351', '2023-06-01'),
+       ('Dishful catering', 301, 'dish@abc.com', '+446722230351', '2023-06-01');
+
+
+
+CREATE TABLE Request (
+    Request_No int primary key,
+    Event_No int,
+    Cater_Company VARCHAR(50),
+    Host_Company VARCHAR(50),
+    FOREIGN KEY (Event_No) REFERENCES Event_Table(Event_No),
+    FOREIGN KEY (Cater_Company) REFERENCES Catering_Company(Cater_Company),
+    FOREIGN KEY (Host_Company) REFERENCES Hospitality_Company(Host_Company)
+);
+
+
+INSERT INTO Request (Request_No, Event_No, Cater_Company, Host_Company)
+VALUES (1120, 101, 'Premier Catering', 'Summerly'), 
+       (1140, 102, 'Well catered', 'Bright Sparks'),
+       (1210, 103, 'Kings Korner catering', 'Eventbrite'),
+       (1170, 104, 'Catering Connection', 'Host'),
+       (1064, 105, 'Dishful catering', 'Acorn');
+
+
+
+CREATE TABLE client (
+    Client_ID int primary key,
+    Client_Name varchar(50),
+    Request_No int,
+    Email_Address varchar(30),
+    Phone_Number varchar(13),
+    FOREIGN KEY (Request_No) REFERENCES Request(Request_No)
+);
+
+INSERT INTO client (Client_ID, Client_Name, Request_No, Email_Address, Phone_Number)
+VALUES (1101, 'Josh', 1120, 'josh@abc.com', '+446754839301'), 
+       (1102, 'Sarah', 1140, 'sarah@def.com', '+446754865301'),
+       (1103, 'Syed', 1210, 'Syed1@best.com', '+446754877301'),
+       (1104, 'Rafey', 1170, 'rafey10@abc.com', '+446754811301'),
+       (1105, 'Saleem', 1064, 'saleem@best.com', '+446754439301');
+
+
+
+CREATE TABLE Guests (
+    Guest_No int primary key,
+    Guest_Name varchar(30),
+    Table_No int,
+    Dietary_No int,
+    Request_No int,
+    FOREIGN KEY (Request_No) REFERENCES Request(Request_No),
+    FOREIGN KEY (Dietary_No) REFERENCES Dietary_Requirements(Dietary_No)
+);
+
+
+INSERT INTO guests (Guest_No, Guest_Name, Table_No, Dietary_No, Request_No)
+VALUES (3101, 'Ali', 2, 1202, 1120), 
+       (3102, 'Samantha', 5, 1204, 1064),
+       (3103, 'Taylor',  13, 1203, 1140),
+       (3104, 'Deep', 7, 1201, 1170),
+       (3105, 'Shah', 15, 1205, 1064);
+
+
+
+
+CREATE TABLE Staff (
+    Staff_ID int primary key,
+    Staff_Name varchar(30),
+    Staff_Type VARCHAR(8),
+    Company_Name VARCHAR(50),
+    Clock_In datetime,
+    Clock_Out datetime,
+    Request_No int,
+    FOREIGN KEY (Request_No) REFERENCES Request(Request_No)
+);
+
+INSERT INTO Staff (Staff_ID, Staff_Name, Staff_Type, Clock_In, Clock_Out, Request_No)
+VALUES (721, 'Mohsin', 'Catering', '2023-05-03 10:34:23.55', '2023-05-03 18:34:23.55', 1120), 
+       (722, 'James', 'Host', '2023-05-03 10:35:23.55', '2023-05-03 18:34:23.55', 1140),
+       (723, 'Noah', 'Catering', '2023-05-03 10:33:23.55', '2023-05-03 18:35:23.55', 1210),
+       (724, 'Oliver', 'Catering', '2023-05-03 10:31:23.55', '2023-05-03 18:34:23.55', 1210),
+       (725, 'Jack', 'Host', '2023-05-03 10:30:23.55', '2023-05-03 18:35:13.55', 1064);
