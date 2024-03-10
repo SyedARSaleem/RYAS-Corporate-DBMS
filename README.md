@@ -1,2 +1,1 @@
-# RYAS-Corporate-DBMS
-A design and implementation of a database management system for an event organizing company, RYAS Corporate
+A database for RYAS Corporate, an event organising company, using an ERD model. Subsequently, I implemented it in SQL, employing relational databases for efficient storage and retrieval of data through optimised query processing strategies.
